@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>Monitoring AMR - PLN ULP Rivai</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="navbar">
+        <div class="logo-title">
+            <img src="logo-polsri.png" alt="Logo Polsri" class="header-logo">
+            <img src="logo-pln.png" alt="Logo PLN" class="header-logo">
+            <h2>Sistem Monitoring AMR ULP Rivai</h2>
+        </div>
+        <div id="clock">--:--:-- WIB</div>
+    </div>
+
+    <div id="kpi-container">
+        <div class="kpi-card">
+            <p class="kpi-title">Total Modem</p>
+            <h3 id="kpi-total">0</h3>
+        </div>
+        <div class="kpi-card online">
+            <p class="kpi-title">Status Online</p>
+            <h3 id="kpi-online">0</h3>
+        </div>
+        <div class="kpi-card offline">
+            <p class="kpi-title">Status Offline (Gangguan)</p>
+            <h3 id="kpi-offline">0</h3>
+        </div>
+        <div class="kpi-card rate">
+            <p class="kpi-title">Tingkat Berhasil (Read Rate)</p>
+            <h3 id="kpi-rate">0%</h3>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div id="sidebar">
+            <h3>Daftar Gangguan</h3>
+            <p class="subtitle">Klik list untuk melihat lokasi di peta</p>
+            
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Cari ID / Trafo...">
+                <button id="search-btn">Cari</button>
+            </div>
+
+            <div class="filter-box">
+                <select id="provider-filter">
+                    <option value="all">Semua Provider</option>
+                    <option value="Telkomsel">Telkomsel</option>
+                    <option value="Indosat">Indosat</option>
+                    <option value="XL">XL</option>
+                    <option value="Tri">Tri</option>
+                </select>
+                <button id="heatmap-btn">🔥 Mode Heatmap</button>
+            </div>
+
+            <ul id="offline-list">
+                </ul>
+        </div>
+        
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <script src="map.js"></script>
+</body>
+</html>
