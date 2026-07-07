@@ -80,23 +80,35 @@ function renderDashboard(providerFilter) {
         // Gambar Pop-up & Sidebar List
         onEachFeature: function (feature, layer) {
             let isOffline = feature.properties.Status === 'Offline';
+            let keterangan = feature.properties.Keterangan || '-'; // Tarik data Keterangan
             
             // Siapkan tombol WA khusus kalau statusnya Offline
             let tombolWA = '';
+            let infoPenyebab = ''; // Variabel buat kotak merah penyebab
+
             if (isOffline) {
                 // Ambil koordinat untuk dikirim ke WA
                 let lat = feature.geometry.coordinates[1];
                 let lng = feature.geometry.coordinates[0];
                 
+                // Bikin Kotak Info Penyebab
+                if (keterangan && keterangan !== '-') {
+                    infoPenyebab = `
+                        <div style="margin-top: 8px; padding: 6px; background-color: #FDEDEC; border: 1px solid #E74C3C; border-radius: 4px; color: #C0392B; font-size: 0.85rem; text-align: left;">
+                            <strong>Penyebab:</strong><br>${keterangan}
+                        </div>
+                    `;
+                }
+                
                 tombolWA = `
-                    <button onclick="kirimWA('${feature.properties.Nama_Trafo}', '${feature.properties.ID_Modem}', '${feature.properties.ID_Pelanggan}', ${lat}, ${lng})" 
+                    <button onclick="kirimWA('${feature.properties.Nama_Trafo}', '${feature.properties.ID_Modem}', '${feature.properties.ID_Pelanggan}', ${lat}, ${lng}, '${keterangan}')" 
                     style="margin-top: 10px; width: 100%; background-color: #25D366; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: bold; font-size: 0.85rem;">
                         📱 Lapor via WhatsApp
                     </button>
                 `;
             }
 
-            // Desain isi Pop-up
+            // Desain isi Pop-up (Udah ditambah infoPenyebab)
             layer.bindPopup(`
                 <div style="text-align: center; font-family: 'Inter', sans-serif; min-width: 180px;">
                     <strong>${feature.properties.Nama_Trafo}</strong><br>
@@ -105,6 +117,7 @@ function renderDashboard(providerFilter) {
                     Provider: <strong>${feature.properties.Provider || '-'}</strong><br>
                     ID Modem: ${feature.properties.ID_Modem}<br>
                     Status: <strong style="color: ${isOffline ? '#E74C3C' : '#2ECC71'}">${feature.properties.Status}</strong>
+                    ${infoPenyebab}
                     ${tombolWA}
                 </div>
             `);
@@ -207,12 +220,12 @@ document.getElementById('search-input').addEventListener('keypress', function (e
 });
 
 // --- FITUR LAPOR WHATSAPP ---
-function kirimWA(namaTrafo, idModem, idPelanggan, lat, lng) {
-    // TODO: Ganti nomor di bawah ini pakai nomor WA lu buat testing! (Pakai 62)
+// (Udah ditambahin parameter penyebab)
+function kirimWA(namaTrafo, idModem, idPelanggan, lat, lng, penyebab) {
     const nomorTujuan = "6285766905841"; 
     
-    // Format pesan
-    const pesan = `⚠️ *LAPORAN GANGGUAN AMR PLN ULP RIVAI* ⚠️%0A%0A*Nama Trafo:* ${namaTrafo}%0A*ID Pelanggan:* ${idPelanggan}%0A*ID Modem:* ${idModem}%0A*Status:* OFFLINE 🔴%0A%0A*Titik Maps:*%0Ahttps://www.google.com/maps?q=${lat},${lng}%0A%0AMohon bantuan tim lapangan untuk segera melakukan pengecekan.`;
+    // Format pesan sekarang mencakup penyebab error
+    const pesan = `⚠️ *LAPORAN GANGGUAN AMR PLN ULP RIVAI* ⚠️%0A%0A*Nama Trafo:* ${namaTrafo}%0A*ID Pelanggan:* ${idPelanggan}%0A*ID Modem:* ${idModem}%0A*Status:* OFFLINE 🔴%0A*Indikasi Penyebab:* ${penyebab}%0A%0A*Titik Maps:*%0Ahttps://www.google.com/maps?q=${lat},${lng}%0A%0AMohon bantuan tim lapangan untuk segera melakukan pengecekan.`;
     
     // Buka link WA
     const linkWA = `https://wa.me/${nomorTujuan}?text=${pesan}`;
